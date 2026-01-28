@@ -6,6 +6,23 @@ nav {
   margin-bottom: 1em;
 }
 
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 0.5em;
+  flex-wrap: wrap;
+}
+
+nav ul li::after {
+  content: " |";
+}
+
+nav ul li:last-child::after {
+  content: "";
+}
+
 h1 {
   font-size: 1.3em;
   margin: 1em 0;
@@ -16,6 +33,39 @@ h2 {
   font-size: 1em;
   margin: 1em 0;
   font-weight: 700;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #000;
+  color: #fff;
+  padding: 8px 16px;
+  z-index: 100;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
 }
 
 img.illustration {
@@ -41,7 +91,12 @@ article figure img {
 article figure figcaption {
   font-style: italic;
   font-size: 0.9em;
-  color: #1c1c1c;
+  color: #333;
+}
+
+footer small {
+  display: block;
+  margin-top: 1em;
 }
 
 a[target="_blank"]::after {
@@ -58,8 +113,20 @@ a[target="_blank"]::after {
   mask-size: contain;
 }
 
-iframe {
-  width: 100%;
-  border: none;
-  margin: 0;
+@media (prefers-reduced-motion: reduce) {
+  #gif-banner img {
+    animation-play-state: paused;
+  }
+
+  .skip-link {
+    transition: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
