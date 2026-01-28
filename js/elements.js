@@ -101,9 +101,9 @@ function toggleAnimations() {
 
 document.addEventListener("DOMContentLoaded", async function () {
   await Promise.all([
-    loadComponent("/navigation.htm", "navigation"),
-    loadComponent("/footer.htm", "footer"),
-    loadComponent("/back.htm", "back"),
+    loadComponent("/navigation.html", "navigation"),
+    loadComponent("/footer.html", "footer"),
+    loadComponent("/back.html", "back"),
   ]);
 
   const savedState = localStorage.getItem("animationsPaused");
