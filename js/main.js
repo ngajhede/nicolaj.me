@@ -23,12 +23,12 @@ function captureFirstFrames() {
 
   const gifs = gifBanner.querySelectorAll("img");
   const promises = [];
-  
+
   gifs.forEach((gif) => {
     if (!gif.dataset.gifSrc) {
       gif.dataset.gifSrc = gif.src;
     }
-    
+
     const promise = new Promise((resolve) => {
       if (gif.complete) {
         captureFrame(gif);
@@ -48,7 +48,7 @@ function captureFirstFrames() {
 
 function captureFrame(gif) {
   if (gif.dataset.staticSrc) return;
-  
+
   const canvas = document.createElement("canvas");
   canvas.width = gif.naturalWidth;
   canvas.height = gif.naturalHeight;
@@ -57,42 +57,18 @@ function captureFrame(gif) {
   gif.dataset.staticSrc = canvas.toDataURL();
 }
 
-function applyAnimationsState() {
-  const gifBanner = document.getElementById("gif-banner");
-  const toggleButton = document.getElementById("toggle-animations");
-  
-  if (!gifBanner || !toggleButton) return;
-
-  const gifs = gifBanner.querySelectorAll("img");
-
-  gifs.forEach((gif) => {
-    if (animationsPaused) {
-      gif.src = gif.dataset.staticSrc || gif.dataset.gifSrc;
-    } else {
-      gif.src = gif.dataset.gifSrc;
-    }
-  });
-
-  toggleButton.textContent = animationsPaused ? "Play animations" : "Pause animations";
-  toggleButton.setAttribute("aria-label", animationsPaused ? "Play GIF animations" : "Pause GIF animations");
-}
-
 function toggleAnimations() {
   const gifBanner = document.getElementById("gif-banner");
   const toggleButton = document.getElementById("toggle-animations");
-  
   if (!gifBanner || !toggleButton) return;
 
-  const gifs = gifBanner.querySelectorAll("img");
   animationsPaused = !animationsPaused;
   localStorage.setItem("animationsPaused", animationsPaused);
 
-  gifs.forEach((gif) => {
-    if (animationsPaused) {
-      gif.src = gif.dataset.staticSrc || gif.dataset.gifSrc;
-    } else {
-      gif.src = gif.dataset.gifSrc;
-    }
+  gifBanner.querySelectorAll("img").forEach((gif) => {
+    gif.src = animationsPaused
+      ? (gif.dataset.staticSrc || gif.dataset.gifSrc)
+      : gif.dataset.gifSrc;
   });
 
   toggleButton.textContent = animationsPaused ? "Play animations" : "Pause animations";
@@ -106,17 +82,21 @@ document.addEventListener("DOMContentLoaded", async function () {
     loadComponent("/back.html", "back"),
   ]);
 
+  await captureFirstFrames();
+
   const savedState = localStorage.getItem("animationsPaused");
   if (savedState === "true") {
     animationsPaused = true;
+    const gifBanner = document.getElementById("gif-banner");
+    const toggleButton = document.getElementById("toggle-animations");
+
+    gifBanner?.querySelectorAll("img").forEach((gif) => {
+      gif.src = gif.dataset.staticSrc || gif.dataset.gifSrc;
+    });
+
+    toggleButton.textContent = "Play animations";
+    toggleButton?.setAttribute("aria-label", "Play GIF animations");
   }
 
-  await captureFirstFrames();
-
-  const toggleButton = document.getElementById("toggle-animations");
-  if (toggleButton) {
-    toggleButton.addEventListener("click", toggleAnimations);
-  }
-
-  applyAnimationsState();
+  document.getElementById("toggle-animations")?.addEventListener("click", toggleAnimations);
 });
